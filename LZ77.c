@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define SearchSize 7
+#define LookaheadSize 6
+#define WindowSize SearchSize + LookaheadSize
+
+typedef enum { false, true } bool;
 // LZ77 Logic:
 // Search Buffer starts off empty
 // Lookahead Buffer loads chars with corresponding size
@@ -36,7 +41,55 @@ void read_lines(FILE* fileInput, char*** lines, int* num_lines) {
   }
 }
 
-void compress(FILE* fileInput, char*** lines, int* num_lines) {}
+// While LookaheadBuffer is not empty
+//      go backwards in searchBuffer to find longest match of the
+//      LookaheadBuffer
+//
+//      if match found
+//          print: (offset from window boundary, length of match, next symbol in
+//          LookaheadBuffer);
+//          shift window by length+1;
+//      else
+//          print: (0. 0, first symbol in LookaheadBuffer);
+//          shift window by 1;
+
+int fileSize(FILE* fileInput) {
+  fseek(fileInput, 0, SEEK_END);
+  int size = ftell(fileInput);
+  rewind(fileInput);
+  return size;
+}
+
+bool findMatch(char* searchBuffer) {
+  bool found = false;
+  return found;
+}
+
+void compress(FILE* fileInput) {
+  char searchBuffer[SearchSize];
+  char loadBuffer[LookaheadSize];
+  char lookaheadBuffer[LookaheadSize];
+
+  printf("File Size: %d\n", fileSize(fileInput));
+  fread(lookaheadBuffer, 1, LookaheadSize, fileInput);
+  fread(loadBuffer, 1, LookaheadSize, fileInput);
+
+  if (findMatch(searchBuffer)) {
+  } else {
+    // Return (0, 0, symbol)
+    // Shift a sequence of characters by 1
+    size_t i = 1, j = 1;
+    searchBuffer[SearchSize - 1] = lookaheadBuffer[0];
+
+    for (; i < SearchSize - 1; ++i) {
+      searchBuffer[i - 1] = searchBuffer[i];
+    }
+
+    for (; j < LookaheadSize; ++j) {
+      lookaheadBuffer[j - 1] = lookaheadBuffer[j];
+    }
+  }
+}
 
 FILE* validateInput(int argc, char* argv[]) {
   FILE* fileInput = NULL;
@@ -66,14 +119,9 @@ int main(int argc, char* argv[]) {
   char** lines = NULL;
   int num_lines = 0;
 
+  // Read entire file
   FILE* fileInput = validateInput(argc, argv);
-
   read_lines(fileInput, &lines, &num_lines);
-
-  int i;
-  for (i = 0; i < num_lines; ++i) {
-    printf("%d, %s", i + 1, lines[i]);
-  }
-
+  compress(fileInput);
   return 0;
 }
